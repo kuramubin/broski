@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>alo, saunze 👋</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;1,600&display=swap" rel="stylesheet">
@@ -18,16 +18,21 @@
     --ink:#2E2A26;
     --paper:#FFFCF5;
     --paper-line:#e5e0cf;
+    --sab:env(safe-area-inset-bottom, 0px);
+    --sat:env(safe-area-inset-top, 0px);
   }
 
-  *{box-sizing:border-box;}
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
   html,body{
     margin:0;
-    min-height:100vh;
+    height:100%;
+    min-height:100svh;
     font-family:'Nunito',sans-serif;
     color:var(--ink);
     overflow-x:hidden;
+    overscroll-behavior-y:none;
+    -webkit-text-size-adjust:100%;
     background:
       linear-gradient(135deg, var(--violet) 0%, var(--violet) 48%, var(--matcha) 52%, var(--matcha) 100%);
     background-attachment:fixed;
@@ -64,11 +69,11 @@
   .stage{
     position:relative;
     z-index:1;
-    min-height:100vh;
+    min-height:100svh;
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:6vh 5vw;
+    padding:calc(6vh + var(--sat)) 5vw calc(6vh + var(--sab));
   }
 
   .eyebrow{
@@ -81,16 +86,18 @@
     color:var(--plum);
     opacity:.65;
     position:fixed;
-    top:22px;
+    top:calc(22px + var(--sat));
     left:50%;
     transform:translateX(-50%);
     z-index:5;
+    padding:0 10px;
   }
 
   /* ================= ENVELOPE ================= */
   #envelope-wrap{
     perspective:1400px;
     cursor:pointer;
+    touch-action:manipulation;
     transition:opacity .5s ease, transform .5s ease;
   }
   #envelope-wrap.hide{
@@ -110,7 +117,7 @@
     border-radius:14px;
     box-shadow:0 18px 40px -12px rgba(74,59,120,.45), 0 2px 0 rgba(0,0,0,.05) inset;
   }
-  .env-body::before{ /* bottom triangle shading for envelope pocket look */
+  .env-body::before{
     content:"";
     position:absolute;
     left:0;right:0;bottom:0;
@@ -133,6 +140,9 @@
   .envelope.open .env-flap{
     transform:rotateX(178deg);
     z-index:1;
+  }
+  .envelope:active .env-flap{
+    transform:scale(0.99);
   }
   .seal{
     position:absolute;
@@ -173,8 +183,10 @@
     display:flex;
     align-items:flex-start;
     justify-content:center;
-    padding:10vh 4vw 6vh;
+    padding:calc(10vh + var(--sat)) 4vw calc(6vh + var(--sab));
     overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
     opacity:0;
     pointer-events:none;
     transform:translateY(30px) scale(.96);
@@ -212,11 +224,16 @@
     position:absolute;
     cursor:pointer;
     user-select:none;
+    -webkit-user-select:none;
+    touch-action:manipulation;
     transition:transform .25s cubic-bezier(.5,-0.6,.4,1.6);
     filter:drop-shadow(0 3px 4px rgba(0,0,0,.15));
-    touch-action:manipulation;
+    z-index:6; /* stays above scattered photos regardless of stacking */
   }
-  .sticker:hover{ transform:scale(1.08) rotate(var(--r,0deg)); }
+  @media (hover:hover) and (pointer:fine){
+    .sticker:hover{ transform:scale(1.08) rotate(var(--r,0deg)); }
+  }
+  .sticker:active{ transform:scale(0.93) rotate(var(--r,0deg)); }
   .sticker.wiggle{ animation:wiggle .5s ease; }
   @keyframes wiggle{
     0%,100%{ transform:rotate(var(--r,0deg)) scale(1); }
@@ -242,6 +259,7 @@
     opacity:0;
     pointer-events:none;
     transition:opacity .25s ease, transform .25s ease;
+    z-index:7;
   }
   .speech.show{
     opacity:1;
@@ -283,9 +301,11 @@
     font-size:1rem;
     background:var(--yellow);
     border:none;
-    padding:12px 22px;
+    padding:14px 24px;
+    min-height:44px;
     border-radius:999px;
     cursor:pointer;
+    touch-action:manipulation;
     box-shadow:0 6px 0 #E0A93A;
     transition:transform .12s ease, box-shadow .12s ease;
   }
@@ -315,7 +335,7 @@
     z-index:50;
   }
   .photo-card{
-    position:absolute;
+    position:fixed;
     pointer-events:auto;
     background:#fff;
     padding:10px 10px 32px;
@@ -323,6 +343,15 @@
     width:min(46vw, 260px);
     box-shadow:0 20px 45px -10px rgba(0,0,0,.4), 0 0 0 1px rgba(0,0,0,.03);
     animation:pop-in .38s cubic-bezier(.5,-0.6,.4,1.6);
+    touch-action:none;
+    cursor:grab;
+    will-change:transform,left,top;
+  }
+  .photo-card.dragging{
+    z-index:999;
+    cursor:grabbing;
+    transition:none;
+    box-shadow:0 28px 60px -12px rgba(0,0,0,.5), 0 0 0 1px rgba(0,0,0,.05);
   }
   .photo-card img{
     display:block;
@@ -331,6 +360,9 @@
     object-fit:cover;
     border-radius:2px;
     background:var(--matcha);
+    -webkit-user-drag:none;
+    user-select:none;
+    pointer-events:none;
   }
   .photo-card .cap{
     display:block;
@@ -339,6 +371,15 @@
     font-size:.82rem;
     color:#444;
     margin-top:8px;
+    pointer-events:none;
+  }
+  .photo-card .hint{
+    display:block;
+    text-align:center;
+    font-size:.62rem;
+    color:#999;
+    margin-top:2px;
+    pointer-events:none;
   }
   @keyframes pop-in{
     0%{ transform:scale(.3) rotate(0deg); opacity:0; }
@@ -348,7 +389,7 @@
 
   #photo-controls{
     position:fixed;
-    bottom:5vh;
+    bottom:calc(4vh + var(--sab));
     left:50%;
     transform:translateX(-50%);
     z-index:60;
@@ -360,10 +401,12 @@
     font-family:'Baloo 2', cursive;
     font-weight:700;
     font-size:.9rem;
-    padding:11px 20px;
+    padding:12px 20px;
+    min-height:44px;
     border-radius:999px;
     border:none;
     cursor:pointer;
+    touch-action:manipulation;
     box-shadow:0 5px 0 rgba(0,0,0,.2);
     transition:transform .12s ease, box-shadow .12s ease;
   }
@@ -375,9 +418,9 @@
   #clear-btn{ background:var(--violet-deep); color:#fff; }
 
   @media (max-width:480px){
-    .photo-card{ width:min(62vw, 240px); padding:8px 8px 26px; }
-    #photo-controls{ bottom:3vh; }
-    #photo-controls button{ font-size:.8rem; padding:10px 16px; }
+    .photo-card{ width:min(58vw, 220px); padding:8px 8px 26px; }
+    #photo-controls{ bottom:calc(3vh + var(--sab)); }
+    #photo-controls button{ font-size:.8rem; padding:11px 16px; }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -417,7 +460,6 @@
       <path d="M82 42 L90 8 L63 34 Z" fill="#232323"/>
       <path d="M22 37 L17 20 L32 32 Z" fill="#4A4A4A"/>
       <path d="M78 37 L83 20 L68 32 Z" fill="#4A4A4A"/>
-      <!-- big surprised meme eyes -->
       <ellipse cx="35" cy="56" rx="10" ry="12" fill="#F4E9C1"/>
       <ellipse cx="65" cy="56" rx="10" ry="12" fill="#F4E9C1"/>
       <ellipse cx="36" cy="58" rx="4" ry="6" fill="#232323"/>
@@ -436,7 +478,6 @@
       <path d="M78 36 L82 18 L66 30 Z" fill="#FFC79A"/>
       <path d="M25 32 q10 -8 20 -2" stroke="#C97236" stroke-width="2.5" fill="none" stroke-linecap="round"/>
       <path d="M75 32 q-10 -8 -20 -2" stroke="#C97236" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      <!-- one eye squinting, one wide: classic derp -->
       <path d="M30 56 q6 -4 11 0" stroke="#3a2b1a" stroke-width="3" fill="none" stroke-linecap="round"/>
       <ellipse cx="66" cy="55" rx="6" ry="7" fill="#fff"/>
       <ellipse cx="66" cy="56" rx="3" ry="4" fill="#3a2b1a"/>
@@ -545,6 +586,7 @@
   const clearBtn = document.getElementById('clear-btn');
   const MAX_PHOTOS = 10;
   let photoStack = [];
+  let hintShown = false;
 
   const captions = ["pic incoming 👀","memory unlocked","exhibit A","no context provided","evidence #{n}"];
 
@@ -554,21 +596,111 @@
     return `https://picsum.photos/seed/${seed}/500/620`;
   }
 
+  // ---- collision avoidance so photos never land on top of the stickers ----
+  function getAvoidRects(){
+    const rects = [];
+    document.querySelectorAll('.sticker').forEach(s => {
+      const r = s.getBoundingClientRect();
+      if(r.width > 0 && r.height > 0){
+        rects.push({ left:r.left-24, top:r.top-24, right:r.right+24, bottom:r.bottom+24 });
+      }
+    });
+    if(!photoControls.classList.contains('hidden')){
+      const r = photoControls.getBoundingClientRect();
+      rects.push({ left:r.left-12, top:r.top-12, right:r.right+12, bottom:r.bottom+12 });
+    }
+    return rects;
+  }
+
+  function rectsOverlap(a,b){
+    return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+  }
+
+  function pickPosition(w, h){
+    const avoid = getAvoidRects();
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const margin = 12;
+    const maxLeft = Math.max(margin, vw - w - margin);
+    const maxTop = Math.max(margin, vh - h - margin);
+
+    let fallback = null, fallbackOverlaps = Infinity;
+
+    for(let i=0;i<24;i++){
+      const left = margin + Math.random()*(maxLeft - margin);
+      const top = margin + Math.random()*(maxTop - margin);
+      const rect = { left, top, right:left+w, bottom:top+h };
+      const overlapping = avoid.filter(a => rectsOverlap(rect, a));
+      if(overlapping.length === 0) return { left, top };
+      if(overlapping.length < fallbackOverlaps){
+        fallbackOverlaps = overlapping.length;
+        fallback = { left, top };
+      }
+    }
+    return fallback || { left: margin, top: margin };
+  }
+
+  function makeDraggable(card){
+    let startX, startY, origLeft, origTop, moved, active = false;
+
+    card.addEventListener('pointerdown', (e) => {
+      active = true;
+      moved = false;
+      startX = e.clientX; startY = e.clientY;
+      const rect = card.getBoundingClientRect();
+      origLeft = rect.left; origTop = rect.top;
+      card.setPointerCapture(e.pointerId);
+      card.classList.add('dragging');
+    });
+
+    card.addEventListener('pointermove', (e) => {
+      if(!active) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if(Math.abs(dx) > 5 || Math.abs(dy) > 5) moved = true;
+      if(moved){
+        card.style.left = (origLeft + dx) + 'px';
+        card.style.top = (origTop + dy) + 'px';
+      }
+    });
+
+    function endDrag(e){
+      if(!active) return;
+      active = false;
+      card.classList.remove('dragging');
+      if(!moved){
+        removePhotoCard(card);
+      }
+    }
+    card.addEventListener('pointerup', endDrag);
+    card.addEventListener('pointercancel', endDrag);
+  }
+
+  function removePhotoCard(card){
+    card.style.transition = 'transform .22s ease, opacity .22s ease';
+    const currentRotate = card.dataset.rot || '0deg';
+    card.style.transform = `rotate(${currentRotate}) scale(0.5)`;
+    card.style.opacity = '0';
+    setTimeout(() => {
+      card.remove();
+      photoStack = photoStack.filter(c => c !== card);
+      if(photoStack.length === 0) photoControls.classList.add('hidden');
+    }, 200);
+  }
+
   function spawnPhoto(){
     if(photoStack.length >= MAX_PHOTOS){
       const oldest = photoStack.shift();
-      oldest.remove();
+      if(oldest) oldest.remove();
     }
 
     const card = document.createElement('div');
     card.className = 'photo-card';
+    card.style.visibility = 'hidden';
+    card.style.left = '-9999px';
+    card.style.top = '0px';
 
-    const rot = (Math.random()*32 - 16).toFixed(1);
-    const topPos = Math.random()*55 + 8;   // vh
-    const leftPos = Math.random()*55 + 8;  // vw
-    card.style.top = topPos + 'vh';
-    card.style.left = leftPos + 'vw';
-    card.style.transform = `rotate(${rot}deg)`;
+    const rot = (Math.random()*32 - 16).toFixed(1) + 'deg';
+    card.dataset.rot = rot;
 
     const img = document.createElement('img');
     img.src = randomPhotoUrl();
@@ -580,14 +712,35 @@
     cap.textContent = captions[Math.floor(Math.random()*captions.length)].replace('{n}', photoStack.length + 1);
     card.appendChild(cap);
 
+    if(!hintShown){
+      const hint = document.createElement('span');
+      hint.className = 'hint';
+      hint.textContent = 'drag to move · tap to remove';
+      card.appendChild(hint);
+      hintShown = true;
+    }
+
     photoOverlay.appendChild(card);
+
+    // measure real rendered size, then place it avoiding the stickers/controls
+    requestAnimationFrame(() => {
+      const w = card.offsetWidth;
+      const h = card.offsetHeight;
+      const pos = pickPosition(w, h);
+      card.style.left = pos.left + 'px';
+      card.style.top = pos.top + 'px';
+      card.style.transform = `rotate(${rot})`;
+      card.style.visibility = 'visible';
+      makeDraggable(card);
+    });
+
     photoStack.push(card);
     photoControls.classList.remove('hidden');
   }
 
   function undoPhoto(){
     const last = photoStack.pop();
-    if(last) last.remove();
+    if(last) removePhotoCardImmediate(last);
     if(photoStack.length === 0) photoControls.classList.add('hidden');
   }
 
@@ -595,6 +748,10 @@
     photoStack.forEach(card => card.remove());
     photoStack = [];
     photoControls.classList.add('hidden');
+  }
+
+  function removePhotoCardImmediate(card){
+    card.remove();
   }
 
   undoBtn.addEventListener('click', undoPhoto);
