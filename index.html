@@ -556,8 +556,6 @@
 </div>
 
 <script>
-const blackCatLines = [...];
-const orangeCatLines = [...];
   // floating background paws
   const field = document.getElementById('paw-field');
   const emojis = ['🐾','🐾','🐈‍⬛','🐈'];
@@ -584,6 +582,10 @@ const orangeCatLines = [...];
       letterWrap.classList.add('show');
     }, 420);
   });
+
+  // sticker wiggle + speech bubbles
+  const blackCatLines = ["he is judging you (fairly)","certified menace to society","void cat has arrived","0 emotions detected","he's plotting something"];
+  const orangeCatLines = ["braincell count: 1","he is not smart but he is trying","orange cat did not think this through","certified silly little guy","10/10 would trust with nothing"];
 
   document.querySelectorAll('.sticker').forEach(sticker => {
     const bubble = document.createElement('div');
