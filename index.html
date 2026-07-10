@@ -746,15 +746,17 @@ function randomPhoto(){
     const rot = (Math.random()*32 - 16).toFixed(1) + 'deg';
     card.dataset.rot = rot;
 
-    const img = document.createElement('img');
-    img.src = randomPhotoUrl();
-    img.alt = 'a lil memory (placeholder — swap this later)';
-    card.appendChild(img);
+const photo = randomPhoto();
 
-    const cap = document.createElement('span');
-    cap.className = 'cap';
-    cap.textContent = captions[Math.floor(Math.random()*captions.length)].replace('{n}', photoStack.length + 1);
-    card.appendChild(cap);
+const img = document.createElement('img');
+img.src = photo.image;
+img.alt = photo.caption;
+card.appendChild(img);
+
+const cap = document.createElement('span');
+cap.className = 'cap';
+cap.textContent = photo.caption;
+card.appendChild(cap);
 
     if(!hintShown){
       const hint = document.createElement('span');
