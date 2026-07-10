@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>alo, saunze 👋</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --violet:#B9A6E0;
+    --violet-deep:#6E4FA0;
+    --matcha:#B9C79A;
+    --khaki:#C9BE8C;
+    --coral:#7A5FB0;
+    --yellow:#D8CB84;
+    --plum:#4A3B78;
+    --ink:#2E2A26;
+    --paper:#FFFCF5;
+    --paper-line:#e5e0cf;
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Nunito',sans-serif;
+    color:var(--ink);
+    overflow-x:hidden;
+    background:
+      linear-gradient(135deg, var(--violet) 0%, var(--violet) 48%, var(--matcha) 52%, var(--matcha) 100%);
+    background-attachment:fixed;
+  }
+
+  h1,h2,h3,.display{
+    font-family:'Baloo 2', cursive;
+  }
+
+  /* ---------- floating background paws ---------- */
+  #paw-field{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:0;
+  }
+  .float-paw{
+    position:absolute;
+    bottom:-10%;
+    font-size:1.6rem;
+    opacity:.35;
+    animation:drift linear infinite;
+    filter:drop-shadow(0 2px 2px rgba(0,0,0,.05));
+  }
+  @keyframes drift{
+    0%{ transform:translateY(0) rotate(0deg); opacity:0; }
+    10%{ opacity:.35; }
+    90%{ opacity:.35; }
+    100%{ transform:translateY(-115vh) rotate(25deg); opacity:0; }
+  }
+
+  /* ---------- page wrapper ---------- */
+  .stage{
+    position:relative;
+    z-index:1;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:6vh 5vw;
+  }
+
+  .eyebrow{
+    text-align:center;
+    font-family:'Baloo 2',cursive;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    font-size:.75rem;
+    color:var(--plum);
+    opacity:.65;
+    position:fixed;
+    top:22px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:5;
+  }
+
+  /* ================= ENVELOPE ================= */
+  #envelope-wrap{
+    perspective:1400px;
+    cursor:pointer;
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  #envelope-wrap.hide{
+    opacity:0;
+    transform:scale(.85) translateY(-10px);
+    pointer-events:none;
+  }
+  .envelope{
+    width:min(88vw, 420px);
+    height:min(60vw, 270px);
+    position:relative;
+  }
+  .env-body{
+    position:absolute;
+    inset:0;
+    background:var(--coral);
+    border-radius:14px;
+    box-shadow:0 18px 40px -12px rgba(74,59,120,.45), 0 2px 0 rgba(0,0,0,.05) inset;
+  }
+  .env-body::before{ /* bottom triangle shading for envelope pocket look */
+    content:"";
+    position:absolute;
+    left:0;right:0;bottom:0;
+    height:62%;
+    background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.06) 100%);
+    border-radius:0 0 14px 14px;
+  }
+  .env-flap{
+    position:absolute;
+    top:0; left:0; right:0;
+    height:0; width:0;
+    border-left:min(44vw,210px) solid transparent;
+    border-right:min(44vw,210px) solid transparent;
+    border-top:min(30vw,142px) solid #9678C4;
+    transform-origin:top center;
+    transition:transform .7s cubic-bezier(.6,-0.28,.44,1.5);
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.12));
+    z-index:3;
+  }
+  .envelope.open .env-flap{
+    transform:rotateX(178deg);
+    z-index:1;
+  }
+  .seal{
+    position:absolute;
+    left:50%; top:38%;
+    transform:translate(-50%,-50%);
+    width:64px;height:64px;
+    background:var(--yellow);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.7rem;
+    box-shadow:0 4px 10px rgba(0,0,0,.18), inset 0 -3px 4px rgba(0,0,0,.08);
+    z-index:4;
+    transition:opacity .3s ease, transform .3s ease;
+  }
+  .envelope.open .seal{
+    opacity:0;
+    transform:translate(-50%,-50%) scale(.4);
+  }
+  .env-hint{
+    text-align:center;
+    margin-top:22px;
+    font-weight:700;
+    color:var(--plum);
+    font-size:.95rem;
+  }
+  .env-hint .tiny{
+    display:block;
+    font-weight:600;
+    font-size:.78rem;
+    opacity:.7;
+    margin-top:4px;
+  }
+
+  /* ================= LETTER ================= */
+  #letter-wrap{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:10vh 4vw 6vh;
+    overflow-y:auto;
+    opacity:0;
+    pointer-events:none;
+    transform:translateY(30px) scale(.96);
+    transition:opacity .6s ease .1s, transform .6s ease .1s;
+    z-index:2;
+  }
+  #letter-wrap.show{
+    opacity:1;
+    pointer-events:auto;
+    transform:translateY(0) scale(1);
+  }
+
+  .letter{
+    position:relative;
+    max-width:640px;
+    width:100%;
+    background:var(--paper);
+    border-radius:6px;
+    padding:52px 42px 44px;
+    box-shadow:0 30px 60px -20px rgba(74,59,120,.4), 0 0 0 1px rgba(0,0,0,.03);
+    background-image:repeating-linear-gradient(var(--paper) 0 27px, var(--paper-line) 27px 28px);
+    background-position: 0 92px;
+  }
+
+  .tape{
+    position:absolute;
+    width:90px;height:28px;
+    background:rgba(201,190,140,.8);
+    box-shadow:0 2px 4px rgba(0,0,0,.08);
+  }
+  .tape.tl{ top:-14px; left:14px; transform:rotate(-8deg); }
+  .tape.tr{ top:-14px; right:14px; transform:rotate(7deg); }
+
+  .sticker{
+    position:absolute;
+    cursor:pointer;
+    user-select:none;
+    transition:transform .25s cubic-bezier(.5,-0.6,.4,1.6);
+    filter:drop-shadow(0 3px 4px rgba(0,0,0,.15));
+    touch-action:manipulation;
+  }
+  .sticker:hover{ transform:scale(1.08) rotate(var(--r,0deg)); }
+  .sticker.wiggle{ animation:wiggle .5s ease; }
+  @keyframes wiggle{
+    0%,100%{ transform:rotate(var(--r,0deg)) scale(1); }
+    25%{ transform:rotate(calc(var(--r,0deg) - 12deg)) scale(1.1); }
+    75%{ transform:rotate(calc(var(--r,0deg) + 12deg)) scale(1.1); }
+  }
+
+  .cat-sticker{ top:-38px; left:-30px; width:96px; --r:-10deg; transform:rotate(-10deg); }
+  .dog-sticker{ bottom:-30px; right:-26px; width:100px; --r:8deg; transform:rotate(8deg); }
+
+  .speech{
+    position:absolute;
+    background:var(--ink);
+    color:#fff;
+    font-family:'Baloo 2',cursive;
+    font-size:.7rem;
+    padding:5px 10px;
+    border-radius:10px;
+    white-space:nowrap;
+    top:-14px;
+    left:50%;
+    transform:translate(-50%,-100%) scale(.6);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+  }
+  .speech.show{
+    opacity:1;
+    transform:translate(-50%,-115%) scale(1);
+  }
+
+  .letter h1{
+    font-size:clamp(1.6rem,4vw,2.1rem);
+    color:var(--plum);
+    margin:0 0 4px;
+  }
+  .letter .sub{
+    font-weight:700;
+    color:var(--coral);
+    margin:0 0 26px;
+    font-size:.95rem;
+  }
+  .letter p{
+    font-size:1.02rem;
+    line-height:1.75;
+    margin:0 0 18px;
+  }
+  .letter .sign{
+    margin-top:30px;
+    font-family:'Baloo 2',cursive;
+    font-size:1.2rem;
+    color:var(--plum);
+  }
+
+  .pat-zone{
+    margin-top:36px;
+    padding-top:22px;
+    border-top:2px dashed var(--paper-line);
+    text-align:center;
+  }
+  #pat-btn{
+    font-family:'Baloo 2',cursive;
+    font-weight:700;
+    font-size:1rem;
+    background:var(--yellow);
+    border:none;
+    padding:12px 22px;
+    border-radius:999px;
+    cursor:pointer;
+    box-shadow:0 6px 0 #E0A93A;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  #pat-btn:active{
+    transform:translateY(4px);
+    box-shadow:0 2px 0 #E0A93A;
+  }
+  #pat-msg{
+    display:block;
+    margin-top:14px;
+    min-height:1.4em;
+    font-weight:700;
+    color:var(--plum);
+  }
+
+  @media (max-width:480px){
+    .letter{ padding:44px 22px 34px; }
+    .cat-sticker{ width:74px; top:-28px; left:-14px; }
+    .dog-sticker{ width:78px; bottom:-22px; right:-14px; }
+  }
+
+  /* ---------- photo stack overlay (orange cat easter egg) ---------- */
+  #photo-overlay{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:50;
+  }
+  .photo-card{
+    position:absolute;
+    pointer-events:auto;
+    background:#fff;
+    padding:10px 10px 32px;
+    border-radius:6px;
+    width:min(46vw, 260px);
+    box-shadow:0 20px 45px -10px rgba(0,0,0,.4), 0 0 0 1px rgba(0,0,0,.03);
+    animation:pop-in .38s cubic-bezier(.5,-0.6,.4,1.6);
+  }
+  .photo-card img{
+    display:block;
+    width:100%;
+    aspect-ratio:4/5;
+    object-fit:cover;
+    border-radius:2px;
+    background:var(--matcha);
+  }
+  .photo-card .cap{
+    display:block;
+    text-align:center;
+    font-family:'Baloo 2', cursive;
+    font-size:.82rem;
+    color:#444;
+    margin-top:8px;
+  }
+  @keyframes pop-in{
+    0%{ transform:scale(.3) rotate(0deg); opacity:0; }
+    60%{ opacity:1; }
+    100%{ opacity:1; }
+  }
+
+  #photo-controls{
+    position:fixed;
+    bottom:5vh;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:60;
+    display:flex;
+    gap:10px;
+  }
+  #photo-controls.hidden{ display:none; }
+  #photo-controls button{
+    font-family:'Baloo 2', cursive;
+    font-weight:700;
+    font-size:.9rem;
+    padding:11px 20px;
+    border-radius:999px;
+    border:none;
+    cursor:pointer;
+    box-shadow:0 5px 0 rgba(0,0,0,.2);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  #photo-controls button:active{
+    transform:translateY(4px);
+    box-shadow:0 1px 0 rgba(0,0,0,.2);
+  }
+  #undo-btn{ background:var(--khaki); color:var(--ink); }
+  #clear-btn{ background:var(--violet-deep); color:#fff; }
+
+  @media (max-width:480px){
+    .photo-card{ width:min(62vw, 240px); padding:8px 8px 26px; }
+    #photo-controls{ bottom:3vh; }
+    #photo-controls button{ font-size:.8rem; padding:10px 16px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .float-paw{ animation:none; opacity:0; }
+    *{ transition-duration:.001s !important; animation-duration:.001s !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="eyebrow">a very official skrunkly transmission 🐾</div>
+
+<div id="paw-field"></div>
+
+<div class="stage">
+  <div id="envelope-wrap">
+    <div class="envelope" id="envelope">
+      <div class="env-body"></div>
+      <div class="env-flap"></div>
+      <div class="seal">🐾</div>
+    </div>
+    <p class="env-hint">tap the envelope
+      <span class="tiny">(no clue who sent it. suspicious.)</span>
+    </p>
+  </div>
+</div>
+
+<div id="letter-wrap">
+  <div class="letter">
+    <div class="tape tl"></div>
+    <div class="tape tr"></div>
+
+    <!-- black cat sticker (derpy meme face) -->
+    <svg class="sticker cat-sticker" data-kind="blackcat" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="60" rx="35" ry="27" fill="#232323"/>
+      <path d="M18 42 L10 8 L37 34 Z" fill="#232323"/>
+      <path d="M82 42 L90 8 L63 34 Z" fill="#232323"/>
+      <path d="M22 37 L17 20 L32 32 Z" fill="#4A4A4A"/>
+      <path d="M78 37 L83 20 L68 32 Z" fill="#4A4A4A"/>
+      <!-- big surprised meme eyes -->
+      <ellipse cx="35" cy="56" rx="10" ry="12" fill="#F4E9C1"/>
+      <ellipse cx="65" cy="56" rx="10" ry="12" fill="#F4E9C1"/>
+      <ellipse cx="36" cy="58" rx="4" ry="6" fill="#232323"/>
+      <ellipse cx="66" cy="53" rx="4" ry="6" fill="#232323"/>
+      <ellipse cx="50" cy="70" rx="3.5" ry="2.5" fill="#FF9E9E"/>
+      <path d="M46 72 q4 4 8 0" stroke="#F4E9C1" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M10 64 L33 66 M10 70 L33 68 M67 66 L90 64 M67 68 L90 70" stroke="#dcd4b8" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+
+    <!-- orange cat sticker (silly tongue-out meme face) -->
+    <svg class="sticker dog-sticker" data-kind="orangecat" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="58" rx="34" ry="28" fill="#E8935B"/>
+      <path d="M20 40 L14 10 L38 32 Z" fill="#E8935B"/>
+      <path d="M80 40 L86 10 L62 32 Z" fill="#E8935B"/>
+      <path d="M22 36 L18 18 L34 30 Z" fill="#FFC79A"/>
+      <path d="M78 36 L82 18 L66 30 Z" fill="#FFC79A"/>
+      <path d="M25 32 q10 -8 20 -2" stroke="#C97236" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M75 32 q-10 -8 -20 -2" stroke="#C97236" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- one eye squinting, one wide: classic derp -->
+      <path d="M30 56 q6 -4 11 0" stroke="#3a2b1a" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="66" cy="55" rx="6" ry="7" fill="#fff"/>
+      <ellipse cx="66" cy="56" rx="3" ry="4" fill="#3a2b1a"/>
+      <ellipse cx="50" cy="66" rx="4" ry="3" fill="#3a2b1a"/>
+      <path d="M48 69 q2 8 -3 12" stroke="#FF8FA3" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M15 60 L38 63 M15 68 L38 66 M62 63 L85 60 M62 66 L85 68" stroke="#3a2b1a" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+
+    <h1>alo, saunze 👋</h1>
+    <p class="sub">surprise hrhehehe</p>
+
+    <p>yes, this website exists purely cuz it's fun, n mostly cuz i rly js wanted an excuse to write u a message without looking strange or like a complete creep by handing u an actual letter. idk, HSHAHAHAH</p>
+
+    <p>anyway, ive been wanting to say this in a normal, non-dramatic way.</p>
+
+    <p>first of all, happy graduation. CONGRATS malala. im genuinely so proud of u +_+. im not a college boy so i cant rly gauge how hard it was for yall, but i js know u endured so much n worked ur ass off to finish ur studies. u deserve this.</p>
+
+    <p>i dont rly say stuff like this often (unless emotional lang sa chats, yk nmn me so well), so ur honestly getting it thru a whole website instead. no escape pa rin.</p>
+
+    <p>this lil message is js an appreciation. we've seen countless versions of ourselves since hs, n to me uve always been this genuine broski who's always there for the ppl u care abt. supportive, caring, kind, n thoughtful. not an ounce of bad blood in ur soul.</p>
+
+    <p>sorry if im such a high-maintenance friend whose negativity is rly contagious. u genuinely have no idea how much comfort uve given me n how much uve changed me for the better. u mgt be my comfort person, but idk… idw get too emotional abt it too. :p</p>
+
+    <p>daz all i wanted to say, broski. things finna change drastically from here — no more deadlines n requirements dictating ur days, js the actual life uve been working towards. i hope u get to experience the life u envisioned for urself, not the rushed version, but the one where u actually get to enjoy the process n not js chase the next milestone. prosper in whatever u choose to do, kasi alam kong kaya mo yan. n along the way, i hope u remember to rest, to have fun, to be present, n to js live — not js exist. love urself a lil more each day too, the way u love everyone else without even trying, cuz u deserve that same kindness back. i hope u find what ur looking for in life n live it with abundance, peace, n ppl who love u as much as u deserve. no matter what u do or where life takes u, ill always be rooting for u.</p>
+
+    <p>ps. im having my best life doing this typa stuff, never get to do em during your bdays cuz yk so sori if na-flood kita these days. (magsawa ka na please)</p>
+
+    <p class="sign">* hulaan mo sino ako, no clue. js a boring broski sa dark. (wow)</p>
+
+    <div class="pat-zone">
+      <button id="pat-btn" type="button">tap for a lil pat 🐾</button>
+      <span id="pat-msg"></span>
+    </div>
+  </div>
+</div>
+
+<div id="photo-overlay"></div>
+<div id="photo-controls" class="hidden">
+  <button id="undo-btn" type="button">↺ undo</button>
+  <button id="clear-btn" type="button">✕ clear all</button>
+</div>
+
+<script>
+  // floating background paws
+  const field = document.getElementById('paw-field');
+  const emojis = ['🐾','🐾','🐈‍⬛','🐈'];
+  for(let i=0;i<16;i++){
+    const s = document.createElement('span');
+    s.className = 'float-paw';
+    s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    s.style.left = (Math.random()*100) + 'vw';
+    s.style.animationDuration = (14 + Math.random()*14) + 's';
+    s.style.animationDelay = (Math.random()*14) + 's';
+    s.style.fontSize = (1 + Math.random()*1.4) + 'rem';
+    field.appendChild(s);
+  }
+
+  // envelope open
+  const envWrap = document.getElementById('envelope-wrap');
+  const envelope = document.getElementById('envelope');
+  const letterWrap = document.getElementById('letter-wrap');
+
+  envelope.addEventListener('click', () => {
+    envelope.classList.add('open');
+    setTimeout(() => {
+      envWrap.classList.add('hide');
+      letterWrap.classList.add('show');
+    }, 420);
+  });
+
+  // sticker wiggle + speech bubbles
+  const blackCatLines = ["he is judging you (fairly)","certified menace to society","void cat has arrived","0 emotions detected","he's plotting something"];
+  const orangeCatLines = ["braincell count: 1","he is not smart but he is trying","orange cat did not think this through","certified silly little guy","10/10 would trust with nothing"];
+
+  document.querySelectorAll('.sticker').forEach(sticker => {
+    const bubble = document.createElement('div');
+    bubble.className = 'speech';
+    sticker.parentElement.style.position = sticker.parentElement.style.position || 'relative';
+    sticker.insertAdjacentElement('afterend', bubble);
+
+    sticker.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sticker.classList.remove('wiggle');
+      void sticker.offsetWidth;
+      sticker.classList.add('wiggle');
+
+      const lines = sticker.dataset.kind === 'blackcat' ? blackCatLines : orangeCatLines;
+      bubble.textContent = lines[Math.floor(Math.random()*lines.length)];
+      bubble.style.left = (sticker.offsetLeft + sticker.offsetWidth/2) + 'px';
+      bubble.style.top = sticker.offsetTop + 'px';
+      bubble.classList.add('show');
+      clearTimeout(bubble._t);
+      bubble._t = setTimeout(() => bubble.classList.remove('show'), 1600);
+
+      // orange cat also drops a random photo onto the screen
+      if(sticker.dataset.kind === 'orangecat'){
+        spawnPhoto();
+      }
+    });
+  });
+
+  // ---------- photo stack (orange cat easter egg) ----------
+  const photoOverlay = document.getElementById('photo-overlay');
+  const photoControls = document.getElementById('photo-controls');
+  const undoBtn = document.getElementById('undo-btn');
+  const clearBtn = document.getElementById('clear-btn');
+  const MAX_PHOTOS = 10;
+  let photoStack = [];
+
+  const captions = ["pic incoming 👀","memory unlocked","exhibit A","no context provided","evidence #{n}"];
+
+  function randomPhotoUrl(){
+    // TODO: swap this for your own image paths later, e.g. "photos/1.jpg"
+    const seed = Math.floor(Math.random()*100000);
+    return `https://picsum.photos/seed/${seed}/500/620`;
+  }
+
+  function spawnPhoto(){
+    if(photoStack.length >= MAX_PHOTOS){
+      const oldest = photoStack.shift();
+      oldest.remove();
+    }
+
+    const card = document.createElement('div');
+    card.className = 'photo-card';
+
+    const rot = (Math.random()*32 - 16).toFixed(1);
+    const topPos = Math.random()*55 + 8;   // vh
+    const leftPos = Math.random()*55 + 8;  // vw
+    card.style.top = topPos + 'vh';
+    card.style.left = leftPos + 'vw';
+    card.style.transform = `rotate(${rot}deg)`;
+
+    const img = document.createElement('img');
+    img.src = randomPhotoUrl();
+    img.alt = 'a lil memory (placeholder — swap this later)';
+    card.appendChild(img);
+
+    const cap = document.createElement('span');
+    cap.className = 'cap';
+    cap.textContent = captions[Math.floor(Math.random()*captions.length)].replace('{n}', photoStack.length + 1);
+    card.appendChild(cap);
+
+    photoOverlay.appendChild(card);
+    photoStack.push(card);
+    photoControls.classList.remove('hidden');
+  }
+
+  function undoPhoto(){
+    const last = photoStack.pop();
+    if(last) last.remove();
+    if(photoStack.length === 0) photoControls.classList.add('hidden');
+  }
+
+  function clearPhotos(){
+    photoStack.forEach(card => card.remove());
+    photoStack = [];
+    photoControls.classList.add('hidden');
+  }
+
+  undoBtn.addEventListener('click', undoPhoto);
+  clearBtn.addEventListener('click', clearPhotos);
+
+  // pat button
+  const patLines = [
+    "you are doing great, actually.",
+    "certified good human 🐾",
+    "here's your pat. spend it wisely.",
+    "the cats approve of you.",
+    "the dogs also approve of you.",
+    "10/10, would befriend again."
+  ];
+  const patBtn = document.getElementById('pat-btn');
+  const patMsg = document.getElementById('pat-msg');
+  patBtn.addEventListener('click', () => {
+    patMsg.textContent = patLines[Math.floor(Math.random()*patLines.length)];
+  });
+</script>
+
+</body>
+</html>
