@@ -432,6 +432,27 @@
   }
   #undo-btn{ background:var(--khaki); color:var(--ink); }
   #clear-btn{ background:var(--violet-deep); color:#fff; }
+    #close-letter{
+    margin-top:12px;
+    font-family:'Baloo 2',cursive;
+    font-weight:700;
+    font-size:.88rem;
+    background:var(--coral);
+    color:#fff;
+    border:none;
+    padding:12px 22px;
+    min-height:44px;
+    border-radius:999px;
+    cursor:pointer;
+    touch-action:manipulation;
+    box-shadow:0 6px 0 #5d4690;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  
+  #close-letter:active{
+    transform:translateY(4px);
+    box-shadow:0 2px 0 #5d4690;
+  }
 
   @media (max-width:480px){
     .photo-card{ width:min(58vw, 220px); padding:8px 8px 26px; }
@@ -529,6 +550,7 @@
 
     <div class="pat-zone">
       <button id="pat-btn" type="button">tap for a lil pat 🐾</button>
+      <button id="close-letter" type="button">✉ close envelope</button>
       <span id="pat-msg"></span>
     </div>
   </div>
@@ -790,6 +812,24 @@
   const patMsg = document.getElementById('pat-msg');
   patBtn.addEventListener('click', () => {
     patMsg.textContent = patLines[Math.floor(Math.random()*patLines.length)];
+  });
+
+  const closeBtn = document.getElementById('close-letter');
+
+  closeBtn.addEventListener('click', () => {
+    // hide letter
+    letterWrap.classList.remove('show');
+  
+    // clear any spawned photos
+    clearPhotos();
+  
+    setTimeout(() => {
+      // show envelope again
+      envWrap.classList.remove('hide');
+  
+      // play closing animation
+      envelope.classList.remove('open');
+    }, 420);
   });
 </script>
 
