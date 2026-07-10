@@ -330,6 +330,38 @@
     font-size:.85rem;
     color:var(--plum);
   }
+  .photo-loading{
+  width:100%;
+  aspect-ratio:4/5;
+  border-radius:2px;
+  background:var(--matcha);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  text-align:center;
+  padding:12px;
+}
+
+.photo-loading .loading-text{
+  font-family:'Baloo 2', cursive;
+  font-size:.85rem;
+  color:#444;
+}
+
+.photo-loading .spinner{
+  width:28px;
+  height:28px;
+  border:3px solid rgba(255,255,255,.45);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+  to{ transform:rotate(360deg); }
+}
 
   @media (max-width:480px){
     .letter{ padding:44px 22px 34px; }
@@ -755,15 +787,30 @@ function randomPhoto(){
 
 const photo = randomPhoto();
 
+const loading = document.createElement('div');
+loading.className = 'photo-loading';
+loading.innerHTML = `
+  <div class="spinner"></div>
+  <div class="loading-text">${photo.caption}</div>
+`;
+
+card.appendChild(loading);
+
 const img = document.createElement('img');
 img.src = photo.image;
 img.alt = photo.caption;
-card.appendChild(img);
+img.style.display = "none";
 
-const cap = document.createElement('span');
-cap.className = 'cap';
-cap.textContent = photo.caption;
-card.appendChild(cap);
+img.onload = () => {
+  loading.remove();
+  img.style.display = "block";
+};
+
+img.onerror = () => {
+  loading.querySelector(".loading-text").textContent = "photo missing :(";
+};
+
+card.insertBefore(img, loading);
 
     if(!hintShown){
       const hint = document.createElement('span');
