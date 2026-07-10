@@ -330,38 +330,6 @@
     font-size:.85rem;
     color:var(--plum);
   }
-  .photo-loading{
-  width:100%;
-  aspect-ratio:4/5;
-  border-radius:2px;
-  background:var(--matcha);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
-  text-align:center;
-  padding:12px;
-}
-
-.photo-loading .loading-text{
-  font-family:'Baloo 2', cursive;
-  font-size:.85rem;
-  color:#444;
-}
-
-.photo-loading .spinner{
-  width:28px;
-  height:28px;
-  border:3px solid rgba(255,255,255,.45);
-  border-top-color:#fff;
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-}
-
-@keyframes spin{
-  to{ transform:rotate(360deg); }
-}
 
   @media (max-width:480px){
     .letter{ padding:44px 22px 34px; }
@@ -663,16 +631,17 @@ const photos = [
   { image: "photos/5.JPG", caption: "wow, rakista sila oh" },
   { image: "photos/6.JPG", caption: "eeeeeeee" },
   { image: "photos/7.jpg", caption: "alr og kween, flipbottle rep of boni" },
-  { image: "photos/8.JPEG", caption: "isang bala ka lang! 🔫" },
+  { image: "photos/8.JPG", caption: "isang bala ka lang! 🔫" },
   { image: "photos/9.JPG", caption: "ok, vibes" },
   { image: "photos/10.JPG", caption: "cool photo fr" },
   { image: "photos/11.JPG", caption: "araw na ayaw magpahatid, why kaya? 🧐" },
   { image: "photos/12.JPG", caption: "yey grad pix" },
-  { image: "photos/13.jpg", caption: "maayos, twin" },
-  { image: "photos/14.jpg", caption: "naligaw, narc kasi" },
-  { image: "photos/15.jpg", caption: "nice, skool girl" },
-  { image: "photos/16.jpg", caption: "nak, pic ka d'yan" },
-  { image: "photos/17.jpg", caption: "regine velasquez" }
+  { image: "photos/13.JPG", caption: "maayos, twin" },
+  { image: "photos/14.JPG", caption: "naligaw, narc kasi" },
+  { image: "photos/15.JPG", caption: "nice, skool girl" },
+  { image: "photos/16.JPG", caption: "nak, pic ka d'yan" },
+  { image: "photos/17.JPG
+    ", caption: "regine velasquez" }
 ];
 
 function randomPhoto(){
@@ -787,30 +756,15 @@ function randomPhoto(){
 
 const photo = randomPhoto();
 
-const loading = document.createElement('div');
-loading.className = 'photo-loading';
-loading.innerHTML = `
-  <div class="spinner"></div>
-  <div class="loading-text">${photo.caption}</div>
-`;
-
-card.appendChild(loading);
-
 const img = document.createElement('img');
 img.src = photo.image;
 img.alt = photo.caption;
-img.style.display = "none";
+card.appendChild(img);
 
-img.onload = () => {
-  loading.remove();
-  img.style.display = "block";
-};
-
-img.onerror = () => {
-  loading.querySelector(".loading-text").textContent = "photo missing :(";
-};
-
-card.insertBefore(img, loading);
+const cap = document.createElement('span');
+cap.className = 'cap';
+cap.textContent = photo.caption;
+card.appendChild(cap);
 
     if(!hintShown){
       const hint = document.createElement('span');
