@@ -8,16 +8,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;1,600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --violet:#B9A6E0;
-    --violet-deep:#6E4FA0;
-    --matcha:#B9C79A;
-    --khaki:#C9BE8C;
-    --coral:#7A5FB0;
-    --yellow:#D8CB84;
-    --plum:#4A3B78;
-    --ink:#2E2A26;
-    --paper:#FFFCF5;
-    --paper-line:#e5e0cf;
+    --violet:#A897C4;
+    --violet-deep:#5B4380;
+    --matcha:#A7AD86;
+    --khaki:#B3A778;
+    --coral:#7C6499;
+    --yellow:#C2AE68;
+    --plum:#3C2F58;
+    --ink:#2C2822;
+    --paper:#FBF7EE;
+    --paper-line:#E1DAC4;
     --sab:env(safe-area-inset-bottom, 0px);
     --sat:env(safe-area-inset-top, 0px);
   }
@@ -92,7 +92,7 @@
     transform:translateX(-50%);
     z-index:9;
     padding:4px 12px;
-    background:rgba(255,252,245,.7);
+    background:rgba(251,247,238,.7);
     backdrop-filter:blur(4px);
     border-radius:999px;
     white-space:nowrap;
@@ -120,7 +120,7 @@
     inset:0;
     background:var(--coral);
     border-radius:14px;
-    box-shadow:0 18px 40px -12px rgba(74,59,120,.45), 0 2px 0 rgba(0,0,0,.05) inset;
+    box-shadow:0 18px 40px -12px rgba(60,47,88,.45), 0 2px 0 rgba(0,0,0,.05) inset;
   }
   .env-body::before{
     content:"";
@@ -136,7 +136,7 @@
     height:0; width:0;
     border-left:min(44vw,210px) solid transparent;
     border-right:min(44vw,210px) solid transparent;
-    border-top:min(30vw,142px) solid #9678C4;
+    border-top:min(30vw,142px) solid #8F739E;
     transform-origin:top center;
     transition:transform .7s cubic-bezier(.6,-0.28,.44,1.5);
     filter:drop-shadow(0 4px 6px rgba(0,0,0,.12));
@@ -211,7 +211,7 @@
     background:var(--paper);
     border-radius:6px;
     padding:52px 42px 44px;
-    box-shadow:0 30px 60px -20px rgba(74,59,120,.4), 0 0 0 1px rgba(0,0,0,.03);
+    box-shadow:0 30px 60px -20px rgba(60,47,88,.4), 0 0 0 1px rgba(0,0,0,.03);
     background-image:repeating-linear-gradient(var(--paper) 0 27px, var(--paper-line) 27px 28px);
     background-position: 0 92px;
   }
@@ -219,7 +219,7 @@
   .tape{
     position:absolute;
     width:90px;height:28px;
-    background:rgba(201,190,140,.8);
+    background:rgba(179,167,120,.8);
     box-shadow:0 2px 4px rgba(0,0,0,.08);
   }
   .tape.tl{ top:-14px; left:14px; transform:rotate(-8deg); }
@@ -309,18 +309,19 @@
     font-weight:700;
     font-size:.88rem;
     background:var(--yellow);
+    color:#fff;
     border:none;
     padding:12px 22px;
     min-height:44px;
     border-radius:999px;
     cursor:pointer;
     touch-action:manipulation;
-    box-shadow:0 6px 0 #E0A93A;
+    box-shadow:0 6px 0 #97854A;
     transition:transform .12s ease, box-shadow .12s ease;
   }
   #pat-btn:active{
     transform:translateY(4px);
-    box-shadow:0 2px 0 #E0A93A;
+    box-shadow:0 2px 0 #97854A;
   }
   #pat-msg{
     display:block;
@@ -425,7 +426,7 @@
     transform:translateY(4px);
     box-shadow:0 1px 0 rgba(0,0,0,.2);
   }
-  #undo-btn{ background:var(--khaki); color:var(--ink); }
+  #undo-btn{ background:var(--khaki); color:#fff; }
   #clear-btn{ background:var(--violet-deep); color:#fff; }
     #close-letter{
     margin-top:12px;
@@ -440,13 +441,13 @@
     border-radius:999px;
     cursor:pointer;
     touch-action:manipulation;
-    box-shadow:0 6px 0 #5d4690;
+    box-shadow:0 6px 0 #4A3A62;
     transition:transform .12s ease, box-shadow .12s ease;
   }
   
   #close-letter:active{
     transform:translateY(4px);
-    box-shadow:0 2px 0 #5d4690;
+    box-shadow:0 2px 0 #4A3A62;
   }
 
   @media (max-width:480px){
@@ -539,7 +540,7 @@
 
     <p>things finna change drastically from here. no more deadlines n requirements dictating ur days, js the actual life uve been working towards. i hope u get to experience the life u envisioned for urself, not the rushed version, but the one where u actually get to enjoy the process n not js chase the next milestone. prosper in whatever u choose to do, cuz ik u can always do it. along the way, remember to rest, have fun, be present, n js live, not js exist. love urself a lil more each day too, the way u love everyone, cuz u deserve that same typa thing. may u find what ur looking for in life n live it with abundance, peace, n ppl who love u as much as u deserve. no matter what u do or where life takes u, ill always be rooting for u. anw, daz all i wanna say.</p>
 
-    <p class="sign">- from handsomest bff :p</p>
+    <p class="sign">- from yo handsomest bff :p</p>
 
     <div class="pat-zone">
       <button id="pat-btn" type="button">tap for lil pat pat 🐾</button>
